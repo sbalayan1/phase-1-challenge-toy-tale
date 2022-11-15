@@ -40,7 +40,7 @@ function renderToy(toy) {
   button.textContent = "<3"
   button.classList.add('like-btn')
   button.id = toy.id
-
+  button.addEventListener('click', () => {updateToyLikes(toy, p)})
   card.append(header, img, p, button)
   container.append(card)
 }
@@ -69,4 +69,25 @@ function createToy(toy) {
   })
   .then(res => res.json())
   .then(data => {renderToy(data)})
+}
+
+function updateToyLikes(toy, likeElem) {
+  const likes = parseInt(likeElem.textContent.split(/liked | times/)[1]) + 1
+  // console.log(parseInt(likeElem, 10))
+
+  fetch(`http://localhost:3000/toys/${toy.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      "likes": likes
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log(data, likeElem)
+    likeElem.textContent = `${toy.name} was liked ${data.likes} times`
+  })
 }
